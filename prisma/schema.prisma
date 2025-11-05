@@ -1,0 +1,58 @@
+// prisma/schema.prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      String   // "admin" | "manager" | "salesgirl"
+  sales     Sale[]
+  expenses  Expense[]
+  createdAt DateTime @default(now())
+}
+
+model Product {
+  id           String   @id @default(cuid())
+  name         String
+  sku          String   @unique
+  quantity     Int
+  reorderLevel Int
+  price        Float
+  cost         Float
+  category     String
+  sales        Sale[]
+  createdAt    DateTime @default(now())
+}
+
+model Sale {
+  id            String   @id @default(cuid())
+  productId     String
+  product       Product  @relation(fields: [productId], references: [id])
+  quantity      Int
+  price         Float
+  total         Float
+  date          DateTime
+  salesPersonId String
+  salesPerson   User     @relation(fields: [salesPersonId], references: [id])
+  paymentMode   String   // "POS" | "transfer" | "cash"
+  createdAt     DateTime @default(now())
+}
+
+model Expense {
+  id          String   @id @default(cuid())
+  description String
+  amount      Float
+  category    String
+  date        DateTime
+  createdBy   String
+  creator     User     @relation(fields: [createdBy], references: [id])
+  createdAt   DateTime @default(now())
+}
