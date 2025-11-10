@@ -1,6 +1,6 @@
 'use server';
 
-import { db } from '@/lib/db';
+import { database as db } from '@/lib/db';
 import type { Product, Sale, Expense } from '@/lib/types';
 
 export async function getDashboardData() {

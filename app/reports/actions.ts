@@ -1,7 +1,7 @@
 // app/reports/actions.ts
 "use server";
 
-import { db } from "@/lib/db";
+import { database as db } from "@/lib/db";
 
 export interface Product {
   id: string;

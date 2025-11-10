@@ -1,7 +1,7 @@
 // app/sales/actions.ts
 "use server";
 
-import { db } from "@/lib/db";
+import { database as db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import type { Product, Sale, User } from "@/lib/types";
 

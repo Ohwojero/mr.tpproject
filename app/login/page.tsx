@@ -13,7 +13,7 @@ import { Label } from "@/components/ui/label"
 import { AlertCircle } from "lucide-react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { compare } from 'bcrypt'
-import { db } from '@/lib/db' 
+import { database as db } from '@/lib/db'
 import { authenticateUser } from './actions'
 
 

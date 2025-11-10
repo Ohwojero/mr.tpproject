@@ -1,104 +1,89 @@
 // lib/db.ts
-import { createClient, type LibsqlClient } from "@libsql/client";
+import Database, { Database as DatabaseType } from "better-sqlite3";
 import { hash } from "bcrypt";
+import path from "path";
 
-const client = createClient({
-  url: process.env.TURSO_DATABASE_URL!,
-  authToken: process.env.TURSO_AUTH_TOKEN!,
+const dbPath = path.join(process.cwd(), "data", "inventory.db");
+const sqliteDb = new Database(dbPath);
+
+// Initialize database tables
+sqliteDb.exec(`
+  CREATE TABLE IF NOT EXISTS users (
+    id TEXT PRIMARY KEY,
+    email TEXT UNIQUE NOT NULL,
+    password TEXT NOT NULL,
+    name TEXT NOT NULL,
+    role TEXT NOT NULL CHECK(role IN ('admin', 'manager', 'salesgirl'))
+  );
+
+  CREATE TABLE IF NOT EXISTS products (
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    sku TEXT UNIQUE NOT NULL,
+    quantity INTEGER NOT NULL,
+    reorderLevel INTEGER NOT NULL,
+    price REAL NOT NULL,
+    cost REAL NOT NULL,
+    category TEXT NOT NULL
+  );
+
+  CREATE TABLE IF NOT EXISTS sales (
+    id TEXT PRIMARY KEY,
+    productId TEXT NOT NULL,
+    quantity INTEGER NOT NULL,
+    price REAL NOT NULL,
+    total REAL NOT NULL,
+    date TEXT NOT NULL,
+    salesPersonId TEXT NOT NULL,
+    paymentMode TEXT NOT NULL CHECK(paymentMode IN ('POS', 'transfer', 'cash')),
+    FOREIGN KEY (productId) REFERENCES products(id),
+    FOREIGN KEY (salesPersonId) REFERENCES users(id)
+  );
+
+  CREATE TABLE IF NOT EXISTS expenses (
+    id TEXT PRIMARY KEY,
+    description TEXT NOT NULL,
+    amount REAL NOT NULL,
+    category TEXT NOT NULL,
+    date TEXT NOT NULL,
+    createdBy TEXT NOT NULL,
+    FOREIGN KEY (createdBy) REFERENCES users(id)
+  );
+`);
+
+// Insert default admin user if not exists
+const adminPassword = hash("admin123", 10).then((hashed) => {
+  const insertAdmin = sqliteDb.prepare(`
+    INSERT OR IGNORE INTO users (id, email, password, name, role)
+    VALUES (?, ?, ?, ?, ?)
+  `);
+  insertAdmin.run('admin1', 'admin@inventory.com', hashed, 'Admin User', 'admin');
 });
 
-async function initDb() {
-  await client.executeMultiple(`
-    CREATE TABLE IF NOT EXISTS users (
-      id TEXT PRIMARY KEY,
-      email TEXT UNIQUE NOT NULL,
-      password TEXT NOT NULL,
-      name TEXT NOT NULL,
-      role TEXT NOT NULL CHECK(role IN ('admin', 'manager', 'salesgirl'))
-    );
-
-    CREATE TABLE IF NOT EXISTS products (
-      id TEXT PRIMARY KEY,
-      name TEXT NOT NULL,
-      sku TEXT UNIQUE NOT NULL,
-      quantity INTEGER NOT NULL,
-      reorderLevel INTEGER NOT NULL,
-      price REAL NOT NULL,
-      cost REAL NOT NULL,
-      category TEXT NOT NULL
-    );
-
-    CREATE TABLE IF NOT EXISTS sales (
-      id TEXT PRIMARY KEY,
-      productId TEXT NOT NULL,
-      quantity INTEGER NOT NULL,
-      price REAL NOT NULL,
-      total REAL NOT NULL,
-      date TEXT NOT NULL,
-      salesPersonId TEXT NOT NULL,
-      paymentMode TEXT NOT NULL CHECK(paymentMode IN ('POS', 'transfer', 'cash')),
-      FOREIGN KEY (productId) REFERENCES products(id),
-      FOREIGN KEY (salesPersonId) REFERENCES users(id)
-    );
-
-    CREATE TABLE IF NOT EXISTS expenses (
-      id TEXT PRIMARY KEY,
-      description TEXT NOT NULL,
-      amount REAL NOT NULL,
-      category TEXT NOT NULL,
-      date TEXT NOT NULL,
-      createdBy TEXT NOT NULL,
-      FOREIGN KEY (createdBy) REFERENCES users(id)
-    );
-  `);
-
-  const adminPassword = await hash("admin123", 10);
-  await client.execute({
-    sql: `
-      INSERT OR IGNORE INTO users (id, email, password, name, role)
-      VALUES ('admin1', 'admin@inventory.com', ?, 'Admin User', 'admin')
-    `,
-    args: [adminPassword],
-  });
-}
-
-let initPromise: Promise<void> | null = null;
-if (!initPromise) {
-  initPromise = initDb().catch((e) => {
-    console.error("DB init failed:", e);
-    throw e;
-  });
-}
-
-export const db = {
-  async all<T = any>(sql: string, params: any[] = []): Promise<T[]> {
-    await initPromise;
-    const result = await client.execute({ sql, args: params });
-    return result.rows as T[];
+export const database: {
+  all<T = any>(sql: string, params?: any[]): T[];
+  get<T = any>(sql: string, params?: any[]): T | null;
+  run(sql: string, params?: any[]): void;
+  transaction<T>(fn: (tx: typeof database) => T): T;
+} = {
+  all<T = any>(sql: string, params: any[] = []): T[] {
+    const stmt = sqliteDb.prepare(sql);
+    return stmt.all(params) as T[];
   },
 
-  async get<T = any>(sql: string, params: any[] = []): Promise<T | null> {
-    await initPromise;
-    const result = await client.execute({ sql, args: params });
-    return (result.rows[0] as T) ?? null;
+  get<T = any>(sql: string, params: any[] = []): T | null {
+    const stmt = sqliteDb.prepare(sql);
+    return (stmt.get(params) as T) ?? null;
   },
 
-  async run(sql: string, params: any[] = []): Promise<void> {
-    await initPromise;
-    await client.execute({ sql, args: params });
+  run(sql: string, params: any[] = []): void {
+    const stmt = sqliteDb.prepare(sql);
+    stmt.run(params);
   },
 
-  async transaction<T>(fn: (tx: typeof db) => Promise<T>): Promise<T> {
-    await initPromise;
-    return client.transaction("write", async (tx) => {
-      const txDb = {
-        all: (sql: string, params: any[] = []) => tx.execute({ sql, args: params }).then((r) => r.rows),
-        get: (sql: string, params: any[] = []) => tx.execute({ sql, args: params }).then((r) => r.rows[0] ?? null),
-        run: (sql: string, params: any[] = []) => tx.execute({ sql, args: params }),
-      };
-      return fn(txDb as any);
-    });
+  transaction<T>(fn: (tx: any) => T): T {
+    return sqliteDb.transaction(fn)(sqliteDb);
   },
 };
 
-export { client as rawClient };
+export { sqliteDb as rawClient };
