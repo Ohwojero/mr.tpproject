@@ -1,2 +1,2 @@
 - [x] Add sample products to lib/db.ts to enable adding sales
-- [ ] Test adding a new sale after products are added
+- [x] Test adding a new sale after products are added

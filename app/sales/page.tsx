@@ -112,6 +112,7 @@ export default function SalesPage() {
       setIsOpen(false);
       const refreshed = await getSalesData();
       setData(refreshed);
+      alert("Sale recorded successfully!");
     } catch (err: any) {
       alert(err.message ?? "Failed to record sale");
     }
