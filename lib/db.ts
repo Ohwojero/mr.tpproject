@@ -75,22 +75,42 @@ export const database: {
   transaction<T>(fn: (tx: typeof database) => T): T;
 } = {
   all<T = any>(sql: string, params: any[] = []): T[] {
-    const stmt = sqliteDb.prepare(sql);
-    return stmt.all(params) as T[];
+    try {
+      const stmt = sqliteDb.prepare(sql);
+      return stmt.all(params) as T[];
+    } catch (error) {
+      console.error('Database all() error:', error, 'SQL:', sql, 'Params:', params);
+      throw error;
+    }
   },
 
   get<T = any>(sql: string, params: any[] = []): T | null {
-    const stmt = sqliteDb.prepare(sql);
-    return (stmt.get(params) as T) ?? null;
+    try {
+      const stmt = sqliteDb.prepare(sql);
+      return (stmt.get(params) as T) ?? null;
+    } catch (error) {
+      console.error('Database get() error:', error, 'SQL:', sql, 'Params:', params);
+      throw error;
+    }
   },
 
   run(sql: string, params: any[] = []): void {
-    const stmt = sqliteDb.prepare(sql);
-    stmt.run(params);
+    try {
+      const stmt = sqliteDb.prepare(sql);
+      stmt.run(params);
+    } catch (error) {
+      console.error('Database run() error:', error, 'SQL:', sql, 'Params:', params);
+      throw error;
+    }
   },
 
   transaction<T>(fn: (tx: any) => T): T {
-    return (sqliteDb.transaction(fn) as any);
+    try {
+      return (sqliteDb.transaction(fn) as any);
+    } catch (error) {
+      console.error('Database transaction() error:', error);
+      throw error;
+    }
   },
 };
 
