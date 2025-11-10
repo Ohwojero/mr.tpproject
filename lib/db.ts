@@ -1,4 +1,9 @@
+
+
+
 // lib/db.ts
+'use server'
+
 import sqlite3 from 'sqlite3';
 import { hashSync } from "bcrypt";
 import path from "path";
@@ -160,7 +165,5 @@ export const database: {
   },
 };
 
-// Initialize database on module load to ensure tables and admin user are created
-getDb();
-
+// Database will be initialized lazily on first access
 export { getDb as rawClient };

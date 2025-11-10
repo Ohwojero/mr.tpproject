@@ -4,5 +4,6 @@
 - [x] Refactor lib/db.ts to use async sqlite3 operations
 - [x] Update app/login/actions.ts to await db calls
 - [x] Update package.json dependencies
+- [x] Remove client-side database imports from login page
 - [ ] Test login functionality in development
 - [ ] Build for production and verify no errors

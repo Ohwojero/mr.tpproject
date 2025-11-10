@@ -53,8 +53,8 @@ export async function addSaleAction(
   const total = product.price * form.quantity;
   const saleId = `sale-${Date.now()}`;
 
-    db.transaction((tx) => {
-      tx.run(
+    await db.transaction(async (tx) => {
+      await tx.run(
         `INSERT INTO sales
          (id, productId, quantity, price, total, date, salesPersonId, paymentMode)
          VALUES (?,?,?,?,?,?,?,?)`,
@@ -70,7 +70,7 @@ export async function addSaleAction(
         ]
       );
 
-      tx.run(
+      await tx.run(
         "UPDATE products SET quantity = quantity - ? WHERE id = ?",
         [form.quantity, form.productId]
       );
@@ -88,9 +88,9 @@ export async function deleteSaleAction(saleId: string) {
 
   if (!sale) throw new Error("Sale not found");
 
-  db.transaction((tx) => {
-    tx.run("DELETE FROM sales WHERE id = ?", [saleId]);
-    tx.run(
+  await db.transaction(async (tx) => {
+    await tx.run("DELETE FROM sales WHERE id = ?", [saleId]);
+    await tx.run(
       "UPDATE products SET quantity = quantity + ? WHERE id = ?",
       [sale.quantity, sale.productId]
     );
