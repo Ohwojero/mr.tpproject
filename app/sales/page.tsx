@@ -4,7 +4,6 @@ import { useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { type RootState, logout } from "@/lib/store";
-import { ProtectedLayout } from "@/components/protected-layout";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -112,7 +111,6 @@ export default function SalesPage() {
       setIsOpen(false);
       const refreshed = await getSalesData();
       setData(refreshed);
-      alert("Sale recorded successfully!");
     } catch (err: any) {
       alert(err.message ?? "Failed to record sale");
     }
@@ -282,7 +280,7 @@ export default function SalesPage() {
     },
     { key: "paymentMode", label: "Mode" },
     {
-      key: "receipt",
+      key: "id",
       label: "Receipt",
       render: (id: string) => (
         <Button
@@ -297,7 +295,7 @@ export default function SalesPage() {
     ...(user?.role !== "salesgirl"
       ? [
           {
-            key: "delete",
+            key: "id",
             label: "Delete",
             render: (id: string) => (
               <Button
@@ -324,11 +322,10 @@ export default function SalesPage() {
 
   // ---------- render ----------
   return (
-    <ProtectedLayout>
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
-        <Sidebar />
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
+      <Sidebar />
 
-        <main className="md:ml-64 p-4 md:p-8">
+      <main className="md:ml-64 p-4 md:p-8">
         {/* Header */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-8">
           {user?.role !== "salesgirl" && (
@@ -554,6 +551,5 @@ export default function SalesPage() {
         </Card>
       </main>
     </div>
-    </ProtectedLayout>
   );
 }

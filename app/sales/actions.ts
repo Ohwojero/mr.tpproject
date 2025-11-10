@@ -41,76 +41,60 @@ export async function addSaleAction(
     salesPersonId: string;
   }
 ) {
-  try {
-    console.log('Adding sale for product:', form.productId, 'quantity:', form.quantity);
+  const product = await db.get<Product>(
+    "SELECT * FROM products WHERE id = ?",
+    [form.productId]
+  );
 
-    const product = await db.get<Product>(
-      "SELECT * FROM products WHERE id = ?",
-      [form.productId]
+  if (!product) throw new Error("Product not found");
+  if (product.quantity < form.quantity)
+    throw new Error("Insufficient stock");
+
+  const total = product.price * form.quantity;
+  const saleId = `sale-${Date.now()}`;
+
+  await db.transaction(async (tx) => {
+    await tx.run(
+      `INSERT INTO sales
+       (id, productId, quantity, price, total, date, salesPersonId, paymentMode)
+       VALUES (?,?,?,?,?,?,?,?)`,
+      [
+        saleId,
+        form.productId,
+        form.quantity,
+        product.price,
+        total,
+        new Date().toISOString(),
+        form.salesPersonId,
+        form.paymentMode,
+      ]
     );
 
-    if (!product) throw new Error("Product not found");
-    if (product.quantity < form.quantity)
-      throw new Error("Insufficient stock");
+    await tx.run(
+      "UPDATE products SET quantity = quantity - ? WHERE id = ?",
+      [form.quantity, form.productId]
+    );
+  });
 
-    const total = product.price * form.quantity;
-    const saleId = `sale-${Date.now()}`;
-
-    await db.transaction(async (tx) => {
-      await tx.run(
-        `INSERT INTO sales
-         (id, productId, quantity, price, total, date, salesPersonId, paymentMode)
-         VALUES (?,?,?,?,?,?,?,?)`,
-        [
-          saleId,
-          form.productId,
-          form.quantity,
-          product.price,
-          total,
-          new Date().toISOString(),
-          form.salesPersonId,
-          form.paymentMode,
-        ]
-      );
-
-      await tx.run(
-        "UPDATE products SET quantity = quantity - ? WHERE id = ?",
-        [form.quantity, form.productId]
-      );
-    });
-
-    console.log('Sale added successfully:', saleId);
-    revalidatePath("/sales");
-  } catch (error) {
-    console.error('Error adding sale:', error);
-    throw error; // Re-throw to let the client handle it
-  }
+  revalidatePath("/sales");
 }
 
 /** Delete a sale + restore stock */
 export async function deleteSaleAction(saleId: string) {
-  try {
-    console.log('Deleting sale:', saleId);
+  const sale = await db.get<Sale>(
+    "SELECT * FROM sales WHERE id = ?",
+    [saleId]
+  );
 
-    const sale = await db.get<Sale>(
-      "SELECT * FROM sales WHERE id = ?",
-      [saleId]
+  if (!sale) throw new Error("Sale not found");
+
+  await db.transaction(async (tx) => {
+    await tx.run("DELETE FROM sales WHERE id = ?", [saleId]);
+    await tx.run(
+      "UPDATE products SET quantity = quantity + ? WHERE id = ?",
+      [sale.quantity, sale.productId]
     );
+  });
 
-    if (!sale) throw new Error("Sale not found");
-
-    await db.transaction(async (tx) => {
-      await tx.run("DELETE FROM sales WHERE id = ?", [saleId]);
-      await tx.run(
-        "UPDATE products SET quantity = quantity + ? WHERE id = ?",
-        [sale.quantity, sale.productId]
-      );
-    });
-
-    console.log('Sale deleted successfully:', saleId);
-    revalidatePath("/sales");
-  } catch (error) {
-    console.error('Error deleting sale:', error);
-    throw error; // Re-throw to let the client handle it
-  }
+  revalidatePath("/sales");
 }

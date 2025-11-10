@@ -12,6 +12,8 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { AlertCircle } from "lucide-react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
+import { compare } from 'bcrypt'
+import { database as db } from '@/lib/db'
 import { authenticateUser } from './actions'
 
 
@@ -47,8 +49,8 @@ export default function LoginPage() {
 
       router.push("/dashboard")
     } catch (err) {
-      console.error('Login error:', err)
-      setError("An error occurred during login. Please try again.")
+      console.error(err)
+      setError("An error occurred during login")
     } finally {
       setIsLoading(false)
     }
@@ -69,6 +71,7 @@ export default function LoginPage() {
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}
+
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input
