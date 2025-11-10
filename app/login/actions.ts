@@ -5,7 +5,7 @@ import { compare } from 'bcrypt'
 
 export async function authenticateUser(email: string, password: string) {
   try {
-    const user = await db.get('SELECT * FROM users WHERE email = ?', [email]) as any
+    const user = await db.get('SELECT * FROM users WHERE email = ?', [email])
 
     if (!user) return null
 
