@@ -1,5 +1,5 @@
 // lib/db.ts
-import { createClient, type LibsqlClient } from "@libsql/client";
+import { createClient } from "@libsql/client/web";
 import { hash } from "bcrypt";
 
 const client = createClient({
@@ -70,35 +70,52 @@ if (!initPromise) {
   });
 }
 
-export const db = {
-  async all<T = any>(sql: string, params: any[] = []): Promise<T[]> {
+interface Database {
+  all<T = any>(sql: string, params?: any[]): Promise<T[]>;
+  get<T = any>(sql: string, params?: any[]): Promise<T | null>;
+  run(sql: string, params?: any[]): Promise<void>;
+  transaction<T>(fn: (tx: Database) => Promise<T>): Promise<T>;
+}
+
+const db: Database = {
+  async all<T = any>(sql: string, params?: any[]): Promise<T[]> {
     await initPromise;
-    const result = await client.execute({ sql, args: params });
+    const result = await client.execute({ sql, args: params || [] });
     return result.rows as T[];
   },
 
-  async get<T = any>(sql: string, params: any[] = []): Promise<T | null> {
+  async get<T = any>(sql: string, params?: any[]): Promise<T | null> {
     await initPromise;
-    const result = await client.execute({ sql, args: params });
-    return (result.rows[0] as T) ?? null;
+    const result = await client.execute({ sql, args: params || [] });
+    return (result.rows[0] ?? null) as T | null;
   },
 
-  async run(sql: string, params: any[] = []): Promise<void> {
+  async run(sql: string, params?: any[]): Promise<void> {
     await initPromise;
-    await client.execute({ sql, args: params });
+    await client.execute({ sql, args: params || [] });
   },
 
-  async transaction<T>(fn: (tx: typeof db) => Promise<T>): Promise<T> {
+  async transaction<T>(fn: (tx: Database) => Promise<T>): Promise<T> {
     await initPromise;
-    return client.transaction("write", async (tx) => {
-      const txDb = {
-        all: (sql: string, params: any[] = []) => tx.execute({ sql, args: params }).then((r) => r.rows),
-        get: (sql: string, params: any[] = []) => tx.execute({ sql, args: params }).then((r) => r.rows[0] ?? null),
-        run: (sql: string, params: any[] = []) => tx.execute({ sql, args: params }),
+    const tx = await client.transaction();
+    try {
+      const txDb: Database = {
+        all: <U = any>(sql: string, params?: any[]) => tx.execute({ sql, args: params || [] }).then((r: any) => r.rows as U[]),
+        get: <U = any>(sql: string, params?: any[]) => tx.execute({ sql, args: params || [] }).then((r: any) => (r.rows[0] ?? null) as U | null),
+        run: (sql: string, params?: any[]) => tx.execute({ sql, args: params || [] }).then(() => {}),
+        transaction: <U>(_: (tx: Database) => Promise<U>): Promise<U> => { throw new Error("Nested transactions not supported"); },
       };
-      return fn(txDb as any);
-    });
+      const result = await fn(txDb);
+      await tx.commit();
+      return result;
+    } catch (e) {
+      await tx.rollback();
+      throw e;
+    }
   },
 };
+
+export { db };
+export { db as database };
 
 export { client as rawClient };

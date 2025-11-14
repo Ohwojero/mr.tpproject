@@ -1,13 +1,6 @@
-# TODO: Add Payment Mode and Sales Summary Printing
+# TODO: Fix TypeScript Error in lib/db.ts
 
-## Tasks
-- [x] Update Sale interface in store.ts to include paymentMode
-- [x] Modify initial sales data in store.ts to include paymentMode
-- [x] Add paymentMode to formData state in sales/page.tsx
-- [x] Add Select component for payment mode in New Sale dialog
-- [x] Update handleAddSale to include paymentMode in new sale object
-- [x] Add Payment Mode column to sales table
-- [ ] Add Print Sales Summary button to sales page
-- [ ] Implement print functionality for sales summary
-- [ ] Test payment mode selection and saving
-- [ ] Test print functionality with POS printer
+- [x] Make db.all method generic: `all<T>(sql: string, params?: any[]): Promise<T[]>`
+- [x] Make db.get method generic: `get<T>(sql: string, params?: any[]): Promise<T | null>`
+- [x] Update txDb in transaction method to match generics
+- [x] Test the changes to ensure no runtime errors

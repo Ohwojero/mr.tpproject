@@ -1,13 +1,12 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  typescript: {
-    ignoreBuildErrors: true,
-  },
-  images: {
-    unoptimized: true,
-  },
-  experimental: {
-    swcPlugins: [],
+  turbopack: {},
+  webpack(config) {
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      "@libsql/client/web": require.resolve("@libsql/client/web"),
+    };
+    return config;
   },
 };
 
