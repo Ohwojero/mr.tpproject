@@ -118,17 +118,22 @@ export function DataTable({
             <ChevronLeft className="w-4 h-4" />
           </Button>
           <div className="flex items-center gap-1">
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-              <Button
-                key={page}
-                variant={currentPage === page ? "default" : "outline"}
-                size="sm"
-                onClick={() => setCurrentPage(page)}
-                className="w-8 h-8 p-0"
-              >
-                {page}
-              </Button>
-            ))}
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => {
+              const startItem = (page - 1) * itemsPerPage + 1;
+              const endItem = Math.min(page * itemsPerPage, filteredData.length);
+              const label = `${startItem}-${endItem}`;
+              return (
+                <Button
+                  key={page}
+                  variant={currentPage === page ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setCurrentPage(page)}
+                  className="px-2 py-1 text-xs"
+                >
+                  {label}
+                </Button>
+              );
+            })}
           </div>
           <Button
             variant="outline"

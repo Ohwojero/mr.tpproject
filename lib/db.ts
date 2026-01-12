@@ -87,11 +87,11 @@ async function getDb() {
   return libsqlClient;
 }
 
-export const database: {
+export const db: {
   all<T = any>(sql: string, params?: any[]): Promise<T[]>;
   get<T = any>(sql: string, params?: any[]): Promise<T | null>;
   run(sql: string, params?: any[]): Promise<void>;
-  transaction<T>(fn: (tx: typeof database) => Promise<T>): Promise<T>;
+  transaction<T>(fn: (tx: typeof db) => Promise<T>): Promise<T>;
 } = {
   async all<T = any>(sql: string, params: any[] = []): Promise<T[]> {
     try {
@@ -125,12 +125,12 @@ export const database: {
     }
   },
 
-  async transaction<T>(fn: (tx: typeof database) => Promise<T>): Promise<T> {
+  async transaction<T>(fn: (tx: typeof db) => Promise<T>): Promise<T> {
     try {
       const client = await getDb();
       await client.execute('BEGIN');
       try {
-        const result = await fn(database);
+        const result = await fn(db);
         await client.execute('COMMIT');
         return result;
       } catch (error) {
