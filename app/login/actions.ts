@@ -1,7 +1,7 @@
 'use server'
 
 import { db } from '@/lib/db'
-import { compare } from 'bcrypt'
+import { compare } from 'bcryptjs'
 
 export async function authenticateUser(email: string, password: string) {
   try {
