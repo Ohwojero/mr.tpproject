@@ -11,7 +11,6 @@
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
     "@libsql/client": "^0.15.15",
-    "@libsql/win32-x64-msvc": "^0.5.22",
     "@prisma/client": "^6.18.0",
     "@radix-ui/react-accordion": "1.2.2",
     "@radix-ui/react-alert-dialog": "1.1.4",
