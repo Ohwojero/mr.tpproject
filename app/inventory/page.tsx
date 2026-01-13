@@ -32,7 +32,9 @@ import {
   ArrowLeft,
   Download,
   Printer,
+  FileSpreadsheet,
 } from "lucide-react";
+import * as XLSX from "xlsx";
 
 import { Sidebar } from "@/components/sidebar";
 import { DataTable } from "@/components/data-table";
@@ -174,6 +176,68 @@ export default function InventoryPage() {
 
   const printInventory = () => window.print();
 
+  // ---------- Excel download ----------
+  const downloadInventoryAsExcel = () => {
+    if (products.length === 0) {
+      alert("No products to download.");
+      return;
+    }
+
+    // Summary sheet data
+    const summaryData = [
+      ["Inventory Report Summary"],
+      ["Generated on", new Date().toLocaleString()],
+      [],
+      ["Key Metrics"],
+      ["Total Products", products.length],
+      ["Low Stock Items", lowStockProducts.length],
+      ["Total Inventory Value", `₦${totalInventoryValue.toFixed(2)}`],
+    ];
+
+    // All Products sheet data
+    const allProductsData = [
+      ["All Products"],
+      ["Name", "SKU", "Category", "Quantity", "Cost", "Price", "Reorder Level", "Total Value"],
+      ...products.map((product) => [
+        product.name,
+        product.sku,
+        product.category,
+        product.quantity,
+        `₦${product.cost.toFixed(2)}`,
+        `₦${product.price.toFixed(2)}`,
+        product.reorderLevel,
+        `₦${(product.quantity * product.cost).toFixed(2)}`,
+      ]),
+      [], // Empty row
+      ["", "", "", "", "", "", "Total", `₦${totalInventoryValue.toFixed(2)}`], // Total row
+    ];
+
+    // Low Stock sheet data
+    const lowStockData = [
+      ["Low Stock Items"],
+      ["Name", "SKU", "Category", "Quantity", "Reorder Level", "Status"],
+      ...lowStockProducts.map((product) => [
+        product.name,
+        product.sku,
+        product.category,
+        product.quantity,
+        product.reorderLevel,
+        "Restock Needed",
+      ]),
+    ];
+
+    // Create workbook
+    const wb = XLSX.utils.book_new();
+
+    // Add sheets
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(summaryData), "Summary");
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(allProductsData), "All Products");
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(lowStockData), "Low Stock");
+
+    // Generate and download file
+    XLSX.writeFile(wb, `inventory_${new Date().toISOString().split("T")[0]}.xlsx`);
+  };
+
   // ---------- Calculations ----------
   const lowStockProducts = products.filter(
     (p) => p.quantity <= p.reorderLevel
@@ -284,6 +348,13 @@ export default function InventoryPage() {
             >
               <Download className="w-4 h-4 mr-2" />
               CSV
+            </Button>
+            <Button
+              onClick={downloadInventoryAsExcel}
+              className="bg-gradient-to-r from-emerald-500 to-emerald-600 text-white border-0 hover:from-emerald-600 hover:to-emerald-700"
+            >
+              <FileSpreadsheet className="w-4 h-4 mr-2" />
+              Excel
             </Button>
             <Button
               onClick={printInventory}

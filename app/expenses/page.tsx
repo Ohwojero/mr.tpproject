@@ -30,7 +30,9 @@ import {
   Download,
   Printer,
   ArrowLeft,
+  FileSpreadsheet,
 } from "lucide-react";
+import * as XLSX from "xlsx";
 
 import { Sidebar } from "@/components/sidebar";
 import { DataTable } from "@/components/data-table";
@@ -142,6 +144,62 @@ export default function ExpensesPage() {
 
   const printExpenses = () => window.print();
 
+  // ---------- Excel download ----------
+  const downloadExpensesAsExcel = () => {
+    if (expenses.length === 0) {
+      alert("No expenses to download.");
+      return;
+    }
+
+    // Summary sheet data
+    const summaryData = [
+      ["Expense Report Summary"],
+      ["Generated on", new Date().toLocaleString()],
+      [],
+      ["Key Metrics"],
+      ["Total Expenses", `₦${totalExpenses.toFixed(2)}`],
+      ["Current Month Expenses", `₦${monthlyExpenses.toFixed(2)}`],
+      ["Total Records", expenses.length],
+    ];
+
+    // Expenses sheet data
+    const expensesData = [
+      ["All Expenses"],
+      ["Description", "Category", "Amount", "Date"],
+      ...expenses.map((expense) => [
+        expense.description,
+        expense.category,
+        `₦${expense.amount.toFixed(2)}`,
+        new Date(expense.date).toLocaleDateString(),
+      ]),
+      [], // Empty row
+      ["", "Total", `₦${totalExpenses.toFixed(2)}`, ""], // Total row
+    ];
+
+    // Expenses by Category sheet
+    const expensesByCategoryData = [
+      ["Expenses by Category"],
+      ["Category", "Total Amount"],
+      ...expensesByCategory.map((item) => [
+        item.category,
+        `₦${item.amount.toFixed(2)}`,
+      ]),
+      [], // Empty row
+      ["Total", `₦${totalExpenses.toFixed(2)}`], // Total row
+    ];
+
+    // Create workbook
+    const wb = XLSX.utils.book_new();
+
+    // Add sheets
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(summaryData), "Summary");
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(expensesData), "All Expenses");
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(expensesByCategoryData), "By Category");
+
+    // Generate and download file
+    XLSX.writeFile(wb, `expenses_${new Date().toISOString().split("T")[0]}.xlsx`);
+  };
+
   // ---------- Calculations ----------
   const totalExpenses = expenses.reduce((s, e) => s + e.amount, 0);
   const currentMonth = new Date().toLocaleString("default", {
@@ -241,6 +299,15 @@ export default function ExpensesPage() {
             >
               <Download className="w-4 h-4 mr-2" />
               CSV
+            </Button>
+
+            <Button
+              variant="outline"
+              onClick={downloadExpensesAsExcel}
+              className="bg-gradient-to-r from-emerald-500 to-emerald-600 text-white border-0 hover:from-emerald-600 hover:to-emerald-700"
+            >
+              <FileSpreadsheet className="w-4 h-4 mr-2" />
+              Excel
             </Button>
 
             <Button
