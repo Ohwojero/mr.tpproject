@@ -104,6 +104,10 @@ export function DataTable({
 
       {/* Pagination */}
       <div className="flex flex-col gap-2">
+        <p className="text-sm text-muted-foreground">
+          Showing {paginatedData.length > 0 ? startIndex + 1 : 0} to{" "}
+          {Math.min(startIndex + itemsPerPage, filteredData.length)} results
+        </p>
         <div className="flex gap-2 justify-center">
           <Button
             variant="outline"
@@ -113,18 +117,8 @@ export function DataTable({
           >
             <ChevronLeft className="w-4 h-4" />
           </Button>
-          <div className="flex items-center gap-1 flex-wrap justify-center">
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-              <Button
-                key={page}
-                variant={currentPage === page ? "default" : "outline"}
-                size="sm"
-                onClick={() => setCurrentPage(page)}
-                className="w-8 h-8 p-0"
-              >
-                {page}
-              </Button>
-            ))}
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-muted-foreground">Page {currentPage} of {totalPages}</span>
           </div>
           <Button
             variant="outline"

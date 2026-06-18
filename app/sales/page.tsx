@@ -518,66 +518,54 @@ export default function SalesPage() {
 
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-          <Card className="bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-950/20 dark:to-cyan-950/20">
+          <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 bg-gradient-to-br from-violet-500 to-purple-600 text-white">
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wide">
+              <CardTitle className="text-sm font-semibold uppercase tracking-wide text-violet-100">
                 Total Sales
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex items-center justify-between">
-                <div className="text-4xl font-bold text-blue-600 dark:text-blue-400">
-                  {data.totalSales}
-                </div>
-                <div className="p-3 bg-blue-100 dark:bg-blue-900/50 rounded-full">
-                  <ShoppingCart className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+                <div className="text-4xl font-bold text-white">{data.totalSales}</div>
+                <div className="p-3 bg-white/20 rounded-full">
+                  <ShoppingCart className="w-6 h-6 text-white" />
                 </div>
               </div>
-              <p className="text-sm text-slate-500 dark:text-slate-400 mt-3 font-medium">
-                Transactions completed
-              </p>
+              <p className="text-sm text-violet-100 mt-3 font-medium">Transactions completed</p>
             </CardContent>
           </Card>
 
-          <Card className="bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-950/20 dark:to-emerald-950/20">
+          <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 bg-gradient-to-br from-amber-500 to-orange-600 text-white">
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wide">
+              <CardTitle className="text-sm font-semibold uppercase tracking-wide text-amber-100">
                 Total Revenue
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex items-center justify-between">
-                <div className="text-4xl font-bold text-green-600 dark:text-green-400">
-                  ₦{data.totalRevenue.toFixed(0)}
-                </div>
-                <div className="p-3 bg-green-100 dark:bg-green-900/50 rounded-full">
-                  <Plus className="w-6 h-6 text-green-600 dark:text-green-400" />
+                <div className="text-3xl font-bold text-white truncate">₦{data.totalRevenue.toFixed(0)}</div>
+                <div className="p-3 bg-white/20 rounded-full flex-shrink-0">
+                  <Plus className="w-6 h-6 text-white" />
                 </div>
               </div>
-              <p className="text-sm text-slate-500 dark:text-slate-400 mt-3 font-medium">
-                Revenue generated
-              </p>
+              <p className="text-sm text-amber-100 mt-3 font-medium">Revenue generated</p>
             </CardContent>
           </Card>
 
-          <Card className="bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-950/20 dark:to-pink-950/20">
+          <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 bg-gradient-to-br from-cyan-500 to-sky-600 text-white">
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wide">
+              <CardTitle className="text-sm font-semibold uppercase tracking-wide text-cyan-100">
                 Average Order Value
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex items-center justify-between">
-                <div className="text-4xl font-bold text-purple-600 dark:text-purple-400">
-                  ₦{data.averageOrderValue.toFixed(0)}
-                </div>
-                <div className="p-3 bg-purple-100 dark:bg-purple-900/50 rounded-full">
-                  <ShoppingCart className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+                <div className="text-3xl font-bold text-white truncate">₦{data.averageOrderValue.toFixed(0)}</div>
+                <div className="p-3 bg-white/20 rounded-full flex-shrink-0">
+                  <ShoppingCart className="w-6 h-6 text-white" />
                 </div>
               </div>
-              <p className="text-sm text-slate-500 dark:text-slate-400 mt-3 font-medium">
-                Per transaction average
-              </p>
+              <p className="text-sm text-cyan-100 mt-3 font-medium">Per transaction average</p>
             </CardContent>
           </Card>
         </div>

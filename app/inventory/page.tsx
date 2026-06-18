@@ -510,66 +510,54 @@ export default function InventoryPage() {
 
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-          <Card className="bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+          <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 bg-gradient-to-br from-blue-500 to-indigo-600 text-white">
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wide">
+              <CardTitle className="text-sm font-semibold uppercase tracking-wide text-blue-100">
                 Total Products
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex items-center justify-between">
-                <div className="text-4xl font-bold text-slate-900 dark:text-white">
-                  {products.length}
-                </div>
-                <div className="p-3 bg-blue-100 dark:bg-blue-900/50 rounded-full">
-                  <Package className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+                <div className="text-4xl font-bold text-white">{products.length}</div>
+                <div className="p-3 bg-white/20 rounded-full">
+                  <Package className="w-6 h-6 text-white" />
                 </div>
               </div>
-              <p className="text-sm text-slate-500 dark:text-slate-400 mt-3 font-medium">
-                Active items in inventory
-              </p>
+              <p className="text-sm text-blue-100 mt-3 font-medium">Active items in inventory</p>
             </CardContent>
           </Card>
 
-          <Card className="bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+          <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 bg-gradient-to-br from-rose-500 to-pink-600 text-white">
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wide">
+              <CardTitle className="text-sm font-semibold uppercase tracking-wide text-rose-100">
                 Low Stock Items
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex items-center justify-between">
-                <div className="text-4xl font-bold text-red-600 dark:text-red-400">
-                  {lowStockProducts.length}
-                </div>
-                <div className="p-3 bg-red-100 dark:bg-red-900/50 rounded-full">
-                  <AlertTriangle className="w-6 h-6 text-red-600 dark:text-red-400" />
+                <div className="text-4xl font-bold text-white">{lowStockProducts.length}</div>
+                <div className="p-3 bg-white/20 rounded-full">
+                  <AlertTriangle className="w-6 h-6 text-white" />
                 </div>
               </div>
-              <p className="text-sm text-slate-500 dark:text-slate-400 mt-3 font-medium">
-                Items below reorder level
-              </p>
+              <p className="text-sm text-rose-100 mt-3 font-medium">Items below reorder level</p>
             </CardContent>
           </Card>
 
-          <Card className="bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+          <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 bg-gradient-to-br from-emerald-500 to-teal-600 text-white">
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wide">
+              <CardTitle className="text-sm font-semibold uppercase tracking-wide text-emerald-100">
                 Inventory Value
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex items-center justify-between">
-                <div className="text-4xl font-bold text-green-600 dark:text-green-400">
-                  ₦{totalInventoryValue.toFixed(0)}
-                </div>
-                <div className="p-3 bg-green-100 dark:bg-green-900/50 rounded-full">
-                  <Package className="w-6 h-6 text-green-600 dark:text-green-400" />
+                <div className="text-3xl font-bold text-white truncate">₦{totalInventoryValue.toFixed(0)}</div>
+                <div className="p-3 bg-white/20 rounded-full flex-shrink-0">
+                  <Package className="w-6 h-6 text-white" />
                 </div>
               </div>
-              <p className="text-sm text-slate-500 dark:text-slate-400 mt-3 font-medium">
-                Total cost of stock
-              </p>
+              <p className="text-sm text-emerald-100 mt-3 font-medium">Total cost of stock</p>
             </CardContent>
           </Card>
         </div>

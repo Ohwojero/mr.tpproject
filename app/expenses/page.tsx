@@ -393,66 +393,54 @@ export default function ExpensesPage() {
 
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-          <Card className="bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 bg-gradient-to-br from-red-50 to-pink-50 dark:from-red-950/20 dark:to-pink-950/20">
+          <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 bg-gradient-to-br from-rose-500 to-red-600 text-white">
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wide">
+              <CardTitle className="text-sm font-semibold uppercase tracking-wide text-rose-100">
                 Total Expenses
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex items-center justify-between">
-                <div className="text-4xl font-bold text-red-600 dark:text-red-400">
-                  ₦{totalExpenses.toFixed(0)}
-                </div>
-                <div className="p-3 bg-red-100 dark:bg-red-900/50 rounded-full">
-                  <DollarSign className="w-6 h-6 text-red-600 dark:text-red-400" />
+                <div className="text-3xl font-bold text-white truncate">₦{totalExpenses.toFixed(0)}</div>
+                <div className="p-3 bg-white/20 rounded-full flex-shrink-0">
+                  <DollarSign className="w-6 h-6 text-white" />
                 </div>
               </div>
-              <p className="text-sm text-slate-500 dark:text-slate-400 mt-3 font-medium">
-                All time expenses
-              </p>
+              <p className="text-sm text-rose-100 mt-3 font-medium">All time expenses</p>
             </CardContent>
           </Card>
 
-          <Card className="bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 bg-gradient-to-br from-orange-50 to-yellow-50 dark:from-orange-950/20 dark:to-yellow-950/20">
+          <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 bg-gradient-to-br from-orange-500 to-amber-600 text-white">
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wide">
+              <CardTitle className="text-sm font-semibold uppercase tracking-wide text-orange-100">
                 {currentMonth} Expenses
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex items-center justify-between">
-                <div className="text-4xl font-bold text-orange-600 dark:text-orange-400">
-                  ₦{monthlyExpenses.toFixed(0)}
-                </div>
-                <div className="p-3 bg-orange-100 dark:bg-orange-900/50 rounded-full">
-                  <DollarSign className="w-6 h-6 text-orange-600 dark:text-orange-400" />
+                <div className="text-3xl font-bold text-white truncate">₦{monthlyExpenses.toFixed(0)}</div>
+                <div className="p-3 bg-white/20 rounded-full flex-shrink-0">
+                  <DollarSign className="w-6 h-6 text-white" />
                 </div>
               </div>
-              <p className="text-sm text-slate-500 dark:text-slate-400 mt-3 font-medium">
-                Current month total
-              </p>
+              <p className="text-sm text-orange-100 mt-3 font-medium">Current month total</p>
             </CardContent>
           </Card>
 
-          <Card className="bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 bg-gradient-to-br from-amber-50 to-lime-50 dark:from-amber-950/20 dark:to-lime-950/20">
+          <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 bg-gradient-to-br from-fuchsia-500 to-purple-600 text-white">
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wide">
+              <CardTitle className="text-sm font-semibold uppercase tracking-wide text-fuchsia-100">
                 Total Records
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex items-center justify-between">
-                <div className="text-4xl font-bold text-amber-600 dark:text-amber-400">
-                  {expenses.length}
-                </div>
-                <div className="p-3 bg-amber-100 dark:bg-amber-900/50 rounded-full">
-                  <Plus className="w-6 h-6 text-amber-600 dark:text-amber-400" />
+                <div className="text-4xl font-bold text-white">{expenses.length}</div>
+                <div className="p-3 bg-white/20 rounded-full">
+                  <Plus className="w-6 h-6 text-white" />
                 </div>
               </div>
-              <p className="text-sm text-slate-500 dark:text-slate-400 mt-3 font-medium">
-                Expense entries
-              </p>
+              <p className="text-sm text-fuchsia-100 mt-3 font-medium">Expense entries</p>
             </CardContent>
           </Card>
         </div>
