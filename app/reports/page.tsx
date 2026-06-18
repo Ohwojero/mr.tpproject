@@ -311,99 +311,79 @@ export default function ReportsPage() {
 
         {/* Key Metrics */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-          <Card className="bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 bg-gradient-to-br from-cyan-50 to-blue-50 dark:from-cyan-950/20 dark:to-blue-950/20">
+          <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 bg-gradient-to-br from-cyan-500 to-blue-600 text-white">
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wide">
+              <CardTitle className="text-sm font-semibold uppercase tracking-wide text-cyan-100">
                 Total Revenue
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="flex items-center justify-between">
-                <div className="text-4xl font-bold text-cyan-600 dark:text-cyan-400">
+              <div className="flex items-center justify-between gap-2">
+                <div className="text-2xl font-bold text-white truncate min-w-0">
                   ₦{totalRevenue.toFixed(0)}
                 </div>
-                <div className="p-3 bg-cyan-100 dark:bg-cyan-900/50 rounded-full">
-                  <TrendingUp className="w-6 h-6 text-cyan-600 dark:text-cyan-400" />
+                <div className="p-3 bg-white/20 rounded-full flex-shrink-0">
+                  <TrendingUp className="w-6 h-6 text-white" />
                 </div>
               </div>
-              <p className="text-sm text-slate-500 dark:text-slate-400 mt-3 font-medium">
-                From {sales.length} sales
-              </p>
+              <p className="text-sm text-cyan-100 mt-3 font-medium">From {sales.length} sales</p>
             </CardContent>
           </Card>
 
-          <Card className="bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 bg-gradient-to-br from-red-50 to-pink-50 dark:from-red-950/20 dark:to-pink-950/20">
+          <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 bg-gradient-to-br from-rose-500 to-pink-600 text-white">
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wide">
+              <CardTitle className="text-sm font-semibold uppercase tracking-wide text-rose-100">
                 Total Expenses
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="flex items-center justify-between">
-                <div className="text-4xl font-bold text-red-600 dark:text-red-400">
+              <div className="flex items-center justify-between gap-2">
+                <div className="text-2xl font-bold text-white truncate min-w-0">
                   ₦{totalExpenses.toFixed(0)}
                 </div>
-                <div className="p-3 bg-red-100 dark:bg-red-900/50 rounded-full">
-                  <TrendingUp className="w-6 h-6 text-red-600 dark:text-red-400" />
+                <div className="p-3 bg-white/20 rounded-full flex-shrink-0">
+                  <TrendingUp className="w-6 h-6 text-white" />
                 </div>
               </div>
-              <p className="text-sm text-slate-500 dark:text-slate-400 mt-3 font-medium">
-                {expenses.length} expense records
-              </p>
+              <p className="text-sm text-rose-100 mt-3 font-medium">{expenses.length} expense records</p>
             </CardContent>
           </Card>
 
-          <Card className="bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-950/20 dark:to-emerald-950/20">
+          <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 bg-gradient-to-br from-emerald-500 to-green-600 text-white">
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wide">
+              <CardTitle className="text-sm font-semibold uppercase tracking-wide text-emerald-100">
                 Net Profit
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="flex items-center justify-between">
-                <div
-                  className={`text-4xl font-bold ${
-                    netProfit >= 0
-                      ? "text-green-600 dark:text-green-400"
-                      : "text-red-600 dark:text-red-400"
-                  }`}
-                >
+              <div className="flex items-center justify-between gap-2">
+                <div className="text-2xl font-bold text-white truncate min-w-0">
                   ₦{netProfit.toFixed(0)}
                 </div>
-                <div className="p-3 bg-green-100 dark:bg-green-900/50 rounded-full">
-                  <TrendingUp
-                    className={`w-6 h-6 ${
-                      netProfit >= 0
-                        ? "text-green-600 dark:text-green-400"
-                        : "text-red-600 dark:text-red-400"
-                    }`}
-                  />
+                <div className="p-3 bg-white/20 rounded-full flex-shrink-0">
+                  <TrendingUp className="w-6 h-6 text-white" />
                 </div>
               </div>
-              <p className="text-sm text-slate-500 dark:text-slate-400 mt-3 font-medium">
-                Revenue - Expenses
-              </p>
+              <p className="text-sm text-emerald-100 mt-3 font-medium">Revenue - Expenses</p>
             </CardContent>
           </Card>
 
-          <Card className="bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-950/20 dark:to-orange-950/20">
+          <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 bg-gradient-to-br from-amber-500 to-orange-600 text-white">
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wide">
+              <CardTitle className="text-sm font-semibold uppercase tracking-wide text-amber-100">
                 Inventory Value
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="flex items-center justify-between">
-                <div className="text-4xl font-bold text-amber-600 dark:text-amber-400">
+              <div className="flex items-center justify-between gap-2">
+                <div className="text-2xl font-bold text-white truncate min-w-0">
                   ₦{totalInventoryValue.toFixed(0)}
                 </div>
-                <div className="p-3 bg-amber-100 dark:bg-amber-900/50 rounded-full">
-                  <TrendingUp className="w-6 h-6 text-amber-600 dark:text-amber-400" />
+                <div className="p-3 bg-white/20 rounded-full flex-shrink-0">
+                  <TrendingUp className="w-6 h-6 text-white" />
                 </div>
               </div>
-              <p className="text-sm text-slate-500 dark:text-slate-400 mt-3 font-medium">
-                {products.length} products
-              </p>
+              <p className="text-sm text-amber-100 mt-3 font-medium">{products.length} products</p>
             </CardContent>
           </Card>
         </div>

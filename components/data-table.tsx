@@ -5,7 +5,7 @@ import type React from "react"
 import { useState, useMemo } from "react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { ChevronLeft, ChevronRight, Search } from "lucide-react"
+import { ChevronFirst, ChevronLast, ChevronLeft, ChevronRight, Search } from "lucide-react"
 
 interface DataTableProps {
   columns: {
@@ -108,7 +108,16 @@ export function DataTable({
           Showing {paginatedData.length > 0 ? startIndex + 1 : 0} to{" "}
           {Math.min(startIndex + itemsPerPage, filteredData.length)} results
         </p>
-        <div className="flex gap-2 justify-center">
+        <div className="flex gap-2 justify-center items-center">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setCurrentPage(1)}
+            disabled={currentPage === 1}
+            title="First page"
+          >
+            <ChevronFirst className="w-4 h-4" />
+          </Button>
           <Button
             variant="outline"
             size="sm"
@@ -117,9 +126,7 @@ export function DataTable({
           >
             <ChevronLeft className="w-4 h-4" />
           </Button>
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-muted-foreground">Page {currentPage} of {totalPages}</span>
-          </div>
+          <span className="text-sm text-muted-foreground px-2">Page {currentPage} of {totalPages}</span>
           <Button
             variant="outline"
             size="sm"
@@ -127,6 +134,15 @@ export function DataTable({
             disabled={currentPage === totalPages}
           >
             <ChevronRight className="w-4 h-4" />
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setCurrentPage(totalPages)}
+            disabled={currentPage === totalPages}
+            title="Last page"
+          >
+            <ChevronLast className="w-4 h-4" />
           </Button>
         </div>
       </div>
