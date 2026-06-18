@@ -51,7 +51,10 @@ export default function UsersPage() {
     password: "",
   });
   const [error, setError] = useState("");
+  const [hydrated, setHydrated] = useState(false);
   const router = useRouter();
+
+  useEffect(() => { setHydrated(true); }, []);
 
   // Load users
   useEffect(() => {
@@ -65,10 +68,11 @@ export default function UsersPage() {
 
   // Auth guard
   useEffect(() => {
+    if (!hydrated) return;
     if (!isAuthenticated || user?.role !== "admin") {
       router.push("/dashboard");
     }
-  }, [isAuthenticated, user, router]);
+  }, [hydrated, isAuthenticated, user, router]);
 
   const handleAddUser = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -108,14 +112,14 @@ export default function UsersPage() {
     setUsers((prev) => prev.filter((u) => u.id !== userId));
   };
 
+  const dispatch = useDispatch();
+
   const handleLogout = () => {
     dispatch(logout());
     router.push("/login");
   };
 
-  const dispatch = useDispatch();
-
-  if (!isAuthenticated || user?.role !== "admin") return null;
+  if (!hydrated || !isAuthenticated || user?.role !== "admin") return null;
 
   const tableColumns = [
     { key: "name", label: "Name", searchable: true },

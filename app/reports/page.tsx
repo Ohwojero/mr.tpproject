@@ -49,10 +49,14 @@ export default function ReportsPage() {
   const [sales, setSales] = useState<Sale[]>([]);
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [loading, setLoading] = useState(true);
-  // Just a comment 
+  const [hydrated, setHydrated] = useState(false);
+  // Just a comment
+
+  useEffect(() => { setHydrated(true); }, []);
 
   // ---------- Load data ----------
   useEffect(() => {
+    if (!hydrated) return;
     if (!isAuthenticated) {
       router.push("/login");
       return;
@@ -73,7 +77,7 @@ export default function ReportsPage() {
       setExpenses(e);
       setLoading(false);
     })();
-  }, [isAuthenticated, user, router]);
+  }, [hydrated, isAuthenticated, user, router]);
 
   // ---------- Calculations ----------
   const totalRevenue = sales.reduce((sum, s) => sum + s.total, 0);

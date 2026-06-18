@@ -69,9 +69,14 @@ export default function InventoryPage() {
   // ---------- Data ----------
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [hydrated, setHydrated] = useState(false);
+
+  useEffect(() => { setHydrated(true); }, []);
 
   // ---------- Load products ----------
   useEffect(() => {
+    if (!hydrated) return;
+
     if (!isAuthenticated) {
       router.push("/login");
       return;
@@ -82,7 +87,7 @@ export default function InventoryPage() {
       setProducts(data);
       setLoading(false);
     })();
-  }, [isAuthenticated, router]);
+  }, [hydrated, isAuthenticated, router]);
 
   // ---------- Add / Update product ----------
   const handleSubmit = async (e: React.FormEvent) => {

@@ -32,20 +32,20 @@ export function Sidebar() {
   };
 
   const menuItems = [
-    ...(user?.role !== "salesgirl" ? [{ href: "/dashboard", label: "Dashboard", icon: Package }] : []),
+    ...(user?.role !== "salesgirl" ? [{ href: "/dashboard", label: "Dashboard", icon: Package, color: "from-blue-500 to-blue-600", bg: "bg-blue-50 dark:bg-blue-950/40", iconBg: "bg-blue-100 dark:bg-blue-900/50", iconColor: "text-blue-600 dark:text-blue-400" }] : []),
     ...(user?.role === "admin" || user?.role === "manager"
-      ? [{ href: "/inventory", label: "Inventory", icon: Package }]
+      ? [{ href: "/inventory", label: "Inventory", icon: Package, color: "from-orange-500 to-orange-600", bg: "bg-orange-50 dark:bg-orange-950/40", iconBg: "bg-orange-100 dark:bg-orange-900/50", iconColor: "text-orange-600 dark:text-orange-400" }]
       : []),
     ...(user?.role === "admin" || user?.role === "manager" || user?.role === "salesgirl"
-      ? [{ href: "/sales", label: "Sales", icon: ShoppingCart }]
+      ? [{ href: "/sales", label: "Sales", icon: ShoppingCart, color: "from-green-500 to-green-600", bg: "bg-green-50 dark:bg-green-950/40", iconBg: "bg-green-100 dark:bg-green-900/50", iconColor: "text-green-600 dark:text-green-400" }]
       : []),
     ...(user?.role === "admin" || user?.role === "manager"
-      ? [{ href: "/expenses", label: "Expenses", icon: DollarSign }]
+      ? [{ href: "/expenses", label: "Expenses", icon: DollarSign, color: "from-red-500 to-red-600", bg: "bg-red-50 dark:bg-red-950/40", iconBg: "bg-red-100 dark:bg-red-900/50", iconColor: "text-red-600 dark:text-red-400" }]
       : []),
     ...(user?.role === "admin"
       ? [
-          { href: "/users", label: "Users", icon: Users },
-          { href: "/reports", label: "Reports", icon: BarChart3 },
+          { href: "/users", label: "Users", icon: Users, color: "from-purple-500 to-purple-600", bg: "bg-purple-50 dark:bg-purple-950/40", iconBg: "bg-purple-100 dark:bg-purple-900/50", iconColor: "text-purple-600 dark:text-purple-400" },
+          { href: "/reports", label: "Reports", icon: BarChart3, color: "from-cyan-500 to-cyan-600", bg: "bg-cyan-50 dark:bg-cyan-950/40", iconBg: "bg-cyan-100 dark:bg-cyan-900/50", iconColor: "text-cyan-600 dark:text-cyan-400" },
         ]
       : []),
   ];
@@ -98,22 +98,22 @@ export function Sidebar() {
                   onClick={() => setIsOpen(false)}
                   className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 ${
                     isActive
-                      ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg"
-                      : "hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 hover:shadow-md"
+                      ? `bg-gradient-to-r ${item.color} text-white shadow-lg`
+                      : `${item.bg} text-slate-700 dark:text-slate-300 hover:shadow-md hover:scale-[1.02]`
                   }`}
                 >
                   <div
                     className={`p-1.5 rounded-lg ${
                       isActive
                         ? "bg-white/20"
-                        : "bg-slate-200 dark:bg-slate-700"
+                        : item.iconBg
                     }`}
                   >
                     <Icon
                       className={`w-4 h-4 ${
                         isActive
                           ? "text-white"
-                          : "text-slate-600 dark:text-slate-400"
+                          : item.iconColor
                       }`}
                     />
                   </div>

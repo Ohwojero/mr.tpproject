@@ -104,10 +104,6 @@ export function DataTable({
 
       {/* Pagination */}
       <div className="flex flex-col gap-2">
-        <p className="text-sm text-muted-foreground">
-          Showing {paginatedData.length > 0 ? startIndex + 1 : 0} to{" "}
-          {Math.min(startIndex + itemsPerPage, filteredData.length)} of {filteredData.length} results
-        </p>
         <div className="flex gap-2 justify-center">
           <Button
             variant="outline"

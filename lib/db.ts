@@ -1,7 +1,6 @@
 // lib/db.ts
-import { createClient, type Client, type ResultSet, type Transaction } from "@libsql/client";
+import { createClient, type Client, type ResultSet } from "@libsql/client";
 import path from "node:path";
-import { hashSync } from "bcrypt";
 
 // ────────────────────────────────────────────────
 // Allowed parameter types for libsql bindings
@@ -50,8 +49,8 @@ async function initializeDatabase(): Promise<void> {
     authToken,
   });
 
-  // ── Create tables ─────────────────────────────────────────────
-  await libsqlClient.execute(`
+  // ── Create tables (batched in one call) ──────────────────────
+  await libsqlClient.executeMultiple(`
     CREATE TABLE IF NOT EXISTS users (
       id          TEXT PRIMARY KEY,
       email       TEXT UNIQUE NOT NULL,
@@ -59,9 +58,6 @@ async function initializeDatabase(): Promise<void> {
       name        TEXT NOT NULL,
       role        TEXT NOT NULL CHECK(role IN ('admin', 'manager', 'salesgirl'))
     );
-  `);
-
-  await libsqlClient.execute(`
     CREATE TABLE IF NOT EXISTS products (
       id           TEXT PRIMARY KEY,
       name         TEXT NOT NULL,
@@ -72,9 +68,6 @@ async function initializeDatabase(): Promise<void> {
       cost         REAL NOT NULL,
       category     TEXT NOT NULL
     );
-  `);
-
-  await libsqlClient.execute(`
     CREATE TABLE IF NOT EXISTS sales (
       id            TEXT PRIMARY KEY,
       productId     TEXT NOT NULL,
@@ -87,9 +80,6 @@ async function initializeDatabase(): Promise<void> {
       FOREIGN KEY (productId)     REFERENCES products(id),
       FOREIGN KEY (salesPersonId) REFERENCES users(id)
     );
-  `);
-
-  await libsqlClient.execute(`
     CREATE TABLE IF NOT EXISTS expenses (
       id          TEXT PRIMARY KEY,
       description TEXT NOT NULL,
@@ -101,40 +91,20 @@ async function initializeDatabase(): Promise<void> {
     );
   `);
 
-  // ── Seed default data (runs only once thanks to OR IGNORE) ───
-  const adminHashed = hashSync("admin123", 10);
+  // ── Seed default admin (pre-hashed password for admin123) ────
+  // Pre-hashed to avoid bcrypt cost on every cold start
+  const adminHashed = "$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi";
 
-  await libsqlClient.execute(
-    `
-      INSERT OR IGNORE INTO users (id, email, password, name, role)
-      VALUES (?, ?, ?, ?, ?)
-    `,
-    ["admin1", "admin@inventory.com", adminHashed, "Admin User", "admin"]
-  );
-
-  await libsqlClient.execute(
-    `
-      INSERT OR IGNORE INTO products (id, name, sku, quantity, reorderLevel, price, cost, category)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    `,
-    ["prod1", "Sample Product 1", "SKU001", 100, 10, 50.00, 30.00, "Electronics"]
-  );
-
-  await libsqlClient.execute(
-    `
-      INSERT OR IGNORE INTO products (id, name, sku, quantity, reorderLevel, price, cost, category)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    `,
-    ["prod2", "Sample Product 2", "SKU002", 200, 20, 25.00, 15.00, "Clothing"]
-  );
-
-  await libsqlClient.execute(
-    `
-      INSERT OR IGNORE INTO products (id, name, sku, quantity, reorderLevel, price, cost, category)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    `,
-    ["prod3", "Sample Product 3", "SKU003", 150, 15, 75.00, 45.00, "Home Goods"]
-  );
+  await libsqlClient.executeMultiple(`
+    INSERT OR IGNORE INTO users (id, email, password, name, role)
+    VALUES ('admin1', 'admin@inventory.com', '${adminHashed}', 'Admin User', 'admin');
+    INSERT OR IGNORE INTO products (id, name, sku, quantity, reorderLevel, price, cost, category)
+    VALUES ('prod1', 'Sample Product 1', 'SKU001', 100, 10, 50.0, 30.0, 'Electronics');
+    INSERT OR IGNORE INTO products (id, name, sku, quantity, reorderLevel, price, cost, category)
+    VALUES ('prod2', 'Sample Product 2', 'SKU002', 200, 20, 25.0, 15.0, 'Clothing');
+    INSERT OR IGNORE INTO products (id, name, sku, quantity, reorderLevel, price, cost, category)
+    VALUES ('prod3', 'Sample Product 3', 'SKU003', 150, 15, 75.0, 45.0, 'Home Goods');
+  `);
 
   console.log("[DB] Initialization & seeding completed");
 }
@@ -147,6 +117,8 @@ async function getInitializedClient(): Promise<Client> {
   if (!initializationPromise) {
     initializationPromise = initializeDatabase().catch((err) => {
       console.error("[DB INIT ERROR]", err);
+      initializationPromise = null; // reset so next call can retry
+      libsqlClient = null;
       throw err;
     });
   }

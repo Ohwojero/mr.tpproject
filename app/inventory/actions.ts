@@ -45,6 +45,14 @@ export async function addProduct(data: Omit<Product, "id">) {
 
 /** Update an existing product */
 export async function updateProduct(id: string, data: Partial<Product>) {
+  if (data.sku !== undefined) {
+    const existing = await db.get<Product>(
+      "SELECT id FROM products WHERE sku = ? AND id != ?",
+      [data.sku, id]
+    );
+    if (existing) throw new Error(`SKU "${data.sku}" is already in use by another product`);
+  }
+
   const fields: string[] = [];
   const values: any[] = [];
 

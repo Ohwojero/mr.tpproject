@@ -67,9 +67,13 @@ export default function ExpensesPage() {
   // ---------- Data ----------
   const [expenses, setExpenses] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [hydrated, setHydrated] = useState(false);
+
+  useEffect(() => { setHydrated(true); }, []);
 
   // ---------- Load expenses ----------
   useEffect(() => {
+    if (!hydrated) return;
     if (!isAuthenticated) {
       router.push("/login");
       return;
@@ -84,7 +88,7 @@ export default function ExpensesPage() {
       setExpenses(data);
       setLoading(false);
     })();
-  }, [isAuthenticated, user, router]);
+  }, [hydrated, isAuthenticated, user, router]);
 
   // ---------- Add expense ----------
   const handleAddExpense = async (e: React.FormEvent) => {

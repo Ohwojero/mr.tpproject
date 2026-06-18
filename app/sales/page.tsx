@@ -76,9 +76,13 @@ export default function SalesPage() {
     averageOrderValue: number;
   } | null>(null);
   const [loading, setLoading] = useState(true);
+  const [hydrated, setHydrated] = useState(false);
+
+  useEffect(() => { setHydrated(true); }, []);
 
   // ---------- load data ----------
   useEffect(() => {
+    if (!hydrated) return;
     if (!isAuthenticated) {
       router.push("/login");
       return;
@@ -97,7 +101,7 @@ export default function SalesPage() {
       setData(d);
       setLoading(false);
     })();
-  }, [isAuthenticated, user, router]);
+  }, [hydrated, isAuthenticated, user, router]);
 
   // ---------- add sale ----------
   const handleAddSale = async (e: React.FormEvent) => {
@@ -342,13 +346,13 @@ export default function SalesPage() {
     ...(user?.role !== "salesgirl"
       ? [
           {
-            key: "id",
+            key: "actions",
             label: "Delete",
-            render: (id: string) => (
+            render: (_: unknown, row: any) => (
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => handleDeleteSale(id)}
+                onClick={() => handleDeleteSale(row.id)}
               >
                 <Trash2 className="w-4 h-4 text-red-600" />
               </Button>

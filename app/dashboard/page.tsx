@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { type RootState, logout } from "@/lib/store";
+import { useDispatch } from "react-redux";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -36,6 +37,7 @@ export default function DashboardPage() {
   const { user, isAuthenticated } = useSelector(
     (state: RootState) => state.auth
   );
+  const dispatch = useDispatch();
   const router = useRouter();
 
   // ---------- 1. Load data from SQLite ----------
@@ -44,8 +46,12 @@ export default function DashboardPage() {
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [stats, setStats] = useState<Stats | null>(null);
   const [loading, setLoading] = useState(true);
+  const [hydrated, setHydrated] = useState(false);
+
+  useEffect(() => { setHydrated(true); }, []);
 
   useEffect(() => {
+    if (!hydrated) return;
     if (!isAuthenticated) {
       router.push("/login");
       return;
@@ -64,13 +70,11 @@ export default function DashboardPage() {
       setStats(data.stats);
       setLoading(false);
     })();
-  }, [isAuthenticated, user, router]);
+  }, [hydrated, isAuthenticated, user, router]);
 
   // ---------- 2. Logout ----------
   const handleLogout = () => {
-    // dispatch is not needed for logout if you only use auth slice
-    // but we keep it for consistency
-    // dispatch(logout());
+    dispatch(logout());
     router.push("/login");
   };
 
@@ -125,91 +129,83 @@ export default function DashboardPage() {
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
           {/* Total Products */}
-          <Card className="bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+          <Card className="border-0 shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-105 overflow-hidden" style={{background: "linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)"}}>
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wide">
+              <CardTitle className="text-sm font-semibold text-blue-200 uppercase tracking-widest">
                 Total Products
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex items-center justify-between">
-                <div className="text-4xl font-bold text-slate-900 dark:text-white">
+                <div className="text-4xl font-bold text-white">
                   {stats?.totalProducts ?? 0}
                 </div>
-                <div className="p-3 bg-blue-100 dark:bg-blue-900/50 rounded-full">
-                  <Package className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+                <div className="p-3 bg-white/10 rounded-full backdrop-blur-sm">
+                  <Package className="w-6 h-6 text-blue-300" />
                 </div>
               </div>
-              <p className="text-sm text-slate-500 dark:text-slate-400 mt-3 font-medium">
-                Active inventory items
-              </p>
+              <p className="text-sm text-blue-300 mt-3 font-medium">Active inventory items</p>
             </CardContent>
           </Card>
 
           {/* Low Stock */}
-          <Card className="bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+          <Card className="border-0 shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-105 overflow-hidden" style={{background: "linear-gradient(135deg, #7b0000 0%, #b71c1c 50%, #e53935 100%)"}}>
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wide">
+              <CardTitle className="text-sm font-semibold text-red-200 uppercase tracking-widest">
                 Low Stock Items
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex items-center justify-between">
-                <div className="text-4xl font-bold text-red-600 dark:text-red-400">
+                <div className="text-4xl font-bold text-white">
                   {stats?.lowStock ?? 0}
                 </div>
-                <div className="p-3 bg-red-100 dark:bg-red-900/50 rounded-full">
-                  <TrendingUp className="w-6 h-6 text-red-600 dark:text-red-400" />
+                <div className="p-3 bg-white/10 rounded-full backdrop-blur-sm">
+                  <TrendingUp className="w-6 h-6 text-red-200" />
                 </div>
               </div>
-              <p className="text-sm text-slate-500 dark:text-slate-400 mt-3 font-medium">
-                Items needing restock
-              </p>
+              <p className="text-sm text-red-200 mt-3 font-medium">Items needing restock</p>
             </CardContent>
           </Card>
 
           {/* Total Sales */}
-          <Card className="bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+          <Card className="border-0 shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-105 overflow-hidden" style={{background: "linear-gradient(135deg, #003d1f 0%, #1b5e20 50%, #2e7d32 100%)"}}>
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wide">
+              <CardTitle className="text-sm font-semibold text-green-200 uppercase tracking-widest">
                 Total Sales
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex items-center justify-between">
-                <div className="text-4xl font-bold text-green-600 dark:text-green-400">
+                <div className="text-4xl font-bold text-white">
                   ₦{totalRevenue.toFixed(0)}
                 </div>
-                <div className="p-3 bg-green-100 dark:bg-green-900/50 rounded-full">
-                  <ShoppingCart className="w-6 h-6 text-green-600 dark:text-green-400" />
+                <div className="p-3 bg-white/10 rounded-full backdrop-blur-sm">
+                  <ShoppingCart className="w-6 h-6 text-green-200" />
                 </div>
               </div>
-              <p className="text-sm text-slate-500 dark:text-slate-400 mt-3 font-medium">
-                Revenue generated
-              </p>
+              <p className="text-sm text-green-200 mt-3 font-medium">Revenue generated</p>
             </CardContent>
           </Card>
 
           {/* Expenses (admin / manager only) */}
           {(user.role === "admin" || user.role === "manager") && (
-            <Card className="bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+            <Card className="border-0 shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-105 overflow-hidden" style={{background: "linear-gradient(135deg, #4a1800 0%, #bf360c 50%, #e64a19 100%)"}}>
               <CardHeader className="pb-3">
-                <CardTitle className="text-sm font-semibold text-slate-600 dark:text-slate-300 uppercase tracking-wide">
+                <CardTitle className="text-sm font-semibold text-orange-200 uppercase tracking-widest">
                   Total Expenses
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="flex items-center justify-between">
-                  <div className="text-4xl font-bold text-orange-600 dark:text-orange-400">
+                  <div className="text-4xl font-bold text-white">
                     ₦{totalExpenses.toFixed(0)}
                   </div>
-                  <div className="p-3 bg-orange-100 dark:bg-orange-900/50 rounded-full">
-                    <DollarSign className="w-6 h-6 text-orange-600 dark:text-orange-400" />
+                  <div className="p-3 bg-white/10 rounded-full backdrop-blur-sm">
+                    <DollarSign className="w-6 h-6 text-orange-200" />
                   </div>
                 </div>
-                <p className="text-sm text-slate-500 dark:text-slate-400 mt-3 font-medium">
-                  Business expenses
-                </p>
+                <p className="text-sm text-orange-200 mt-3 font-medium">Business expenses</p>
               </CardContent>
             </Card>
           )}
@@ -222,15 +218,15 @@ export default function DashboardPage() {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <Link href="/inventory">
-              <Card className="cursor-pointer hover:shadow-xl hover:scale-105 transition-all duration-300 bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm border-0 shadow-lg group">
+              <Card className="cursor-pointer hover:shadow-2xl hover:scale-105 transition-all duration-300 border-0 shadow-lg group overflow-hidden" style={{background: "linear-gradient(135deg, #2c1654 0%, #4a235a 50%, #6a1b9a 100%)"}}>
                 <CardHeader className="pb-3">
-                  <CardTitle className="flex items-center gap-3 text-slate-800 dark:text-slate-200 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">
-                    <div className="p-2 bg-purple-100 dark:bg-purple-900/50 rounded-lg group-hover:bg-purple-200 dark:group-hover:bg-purple-800/50 transition-colors">
-                      <Package className="w-5 h-5" />
+                  <CardTitle className="flex items-center gap-3 text-white">
+                    <div className="p-2 bg-white/15 rounded-lg">
+                      <Package className="w-5 h-5 text-purple-200" />
                     </div>
                     Inventory Management
                   </CardTitle>
-                  <CardDescription className="text-slate-600 dark:text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors">
+                  <CardDescription className="text-purple-200">
                     Manage products and stock levels
                   </CardDescription>
                 </CardHeader>
@@ -239,15 +235,15 @@ export default function DashboardPage() {
 
             {(user.role === "admin" || user.role === "manager") && (
               <Link href="/sales">
-                <Card className="cursor-pointer hover:shadow-xl hover:scale-105 transition-all duration-300 bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm border-0 shadow-lg group">
+                <Card className="cursor-pointer hover:shadow-2xl hover:scale-105 transition-all duration-300 border-0 shadow-lg group overflow-hidden" style={{background: "linear-gradient(135deg, #003d2b 0%, #00695c 50%, #00897b 100%)"}}>
                   <CardHeader className="pb-3">
-                    <CardTitle className="flex items-center gap-3 text-slate-800 dark:text-slate-200 group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors">
-                      <div className="p-2 bg-cyan-100 dark:bg-cyan-900/50 rounded-lg group-hover:bg-cyan-200 dark:group-hover:bg-cyan-800/50 transition-colors">
-                        <ShoppingCart className="w-5 h-5" />
+                    <CardTitle className="flex items-center gap-3 text-white">
+                      <div className="p-2 bg-white/15 rounded-lg">
+                        <ShoppingCart className="w-5 h-5 text-teal-200" />
                       </div>
                       Sales Management
                     </CardTitle>
-                    <CardDescription className="text-slate-600 dark:text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors">
+                    <CardDescription className="text-teal-200">
                       Track and manage sales transactions
                     </CardDescription>
                   </CardHeader>
@@ -257,15 +253,15 @@ export default function DashboardPage() {
 
             {(user.role === "admin" || user.role === "manager") && (
               <Link href="/expenses">
-                <Card className="cursor-pointer hover:shadow-xl hover:scale-105 transition-all duration-300 bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm border-0 shadow-lg group">
+                <Card className="cursor-pointer hover:shadow-2xl hover:scale-105 transition-all duration-300 border-0 shadow-lg group overflow-hidden" style={{background: "linear-gradient(135deg, #4a0030 0%, #880e4f 50%, #c2185b 100%)"}}>
                   <CardHeader className="pb-3">
-                    <CardTitle className="flex items-center gap-3 text-slate-800 dark:text-slate-200 group-hover:text-pink-600 dark:group-hover:text-pink-400 transition-colors">
-                      <div className="p-2 bg-pink-100 dark:bg-pink-900/50 rounded-lg group-hover:bg-pink-200 dark:group-hover:bg-pink-800/50 transition-colors">
-                        <DollarSign className="w-5 h-5" />
+                    <CardTitle className="flex items-center gap-3 text-white">
+                      <div className="p-2 bg-white/15 rounded-lg">
+                        <DollarSign className="w-5 h-5 text-pink-200" />
                       </div>
                       Expense Tracking
                     </CardTitle>
-                    <CardDescription className="text-slate-600 dark:text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors">
+                    <CardDescription className="text-pink-200">
                       Monitor business expenses
                     </CardDescription>
                   </CardHeader>
@@ -275,15 +271,15 @@ export default function DashboardPage() {
 
             {user.role === "admin" && (
               <Link href="/users">
-                <Card className="cursor-pointer hover:shadow-xl hover:scale-105 transition-all duration-300 bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm border-0 shadow-lg group">
+                <Card className="cursor-pointer hover:shadow-2xl hover:scale-105 transition-all duration-300 border-0 shadow-lg group overflow-hidden" style={{background: "linear-gradient(135deg, #0d1b4b 0%, #1a237e 50%, #283593 100%)"}}>
                   <CardHeader className="pb-3">
-                    <CardTitle className="flex items-center gap-3 text-slate-800 dark:text-slate-200 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
-                      <div className="p-2 bg-indigo-100 dark:bg-indigo-900/50 rounded-lg group-hover:bg-indigo-200 dark:group-hover:bg-indigo-800/50 transition-colors">
-                        <Package className="w-5 h-5" />
+                    <CardTitle className="flex items-center gap-3 text-white">
+                      <div className="p-2 bg-white/15 rounded-lg">
+                        <Package className="w-5 h-5 text-indigo-200" />
                       </div>
                       User Management
                     </CardTitle>
-                    <CardDescription className="text-slate-600 dark:text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors">
+                    <CardDescription className="text-indigo-200">
                       Manage system users and roles
                     </CardDescription>
                   </CardHeader>
@@ -293,15 +289,15 @@ export default function DashboardPage() {
 
             {user.role === "admin" && (
               <Link href="/reports">
-                <Card className="cursor-pointer hover:shadow-xl hover:scale-105 transition-all duration-300 bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm border-0 shadow-lg group">
+                <Card className="cursor-pointer hover:shadow-2xl hover:scale-105 transition-all duration-300 border-0 shadow-lg group overflow-hidden" style={{background: "linear-gradient(135deg, #00333a 0%, #006064 50%, #00838f 100%)"}}>
                   <CardHeader className="pb-3">
-                    <CardTitle className="flex items-center gap-3 text-slate-800 dark:text-slate-200 group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors">
-                      <div className="p-2 bg-teal-100 dark:bg-teal-900/50 rounded-lg group-hover:bg-teal-200 dark:group-hover:bg-teal-800/50 transition-colors">
-                        <TrendingUp className="w-5 h-5" />
+                    <CardTitle className="flex items-center gap-3 text-white">
+                      <div className="p-2 bg-white/15 rounded-lg">
+                        <TrendingUp className="w-5 h-5 text-cyan-200" />
                       </div>
                       Reports & Analytics
                     </CardTitle>
-                    <CardDescription className="text-slate-600 dark:text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors">
+                    <CardDescription className="text-cyan-200">
                       View business analytics and reports
                     </CardDescription>
                   </CardHeader>
